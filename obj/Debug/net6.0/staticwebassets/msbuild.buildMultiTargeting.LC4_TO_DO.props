@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\LC4_TO_DO.props" />
+</Project>
