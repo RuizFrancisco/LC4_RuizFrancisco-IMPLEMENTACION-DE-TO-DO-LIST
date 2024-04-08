@@ -16,27 +16,41 @@ namespace LC4_TO_DO.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("GetUsers")]
         public IActionResult GetUsers()
         {
-            var users =  _context.Users.ToList();
+            var users = _context.Users
+                .Select(user => new UserGetDto
+                {
+                    id_user = user.id_user,
+                    name = user.name,
+                    email = user.email,
+                    password = user.password,
+                })
+                .ToList();
 
             return Ok(users);
         }
 
-        [HttpGet]
-        [Route("{id}")]
+        [HttpGet("GetUserById/{id}")]
         public IActionResult GetUserById( int id)
         {
-            var user =  _context.Users.Find(id);
+            var user = _context.Users.Find(id);
             if (user == null)
             {
                 return NotFound($"Usuario ID {id} no encontrado");
             }
-            return Ok(user);
+            var userDto = new UserGetDto
+            {
+                id_user = user.id_user,
+                name = user.name,
+                email = user.email,
+                password = user.password,
+            };
+            return Ok(userDto);
         }
 
-        [HttpPost]
+        [HttpPost("CreateUser")]
         public IActionResult CreateUser([FromBody]UserDto userDto)
         {
             if (userDto.name == "string" || userDto.email == "string" || userDto.password == "string") 
@@ -64,8 +78,7 @@ namespace LC4_TO_DO.Controllers
             }
         }
 
-        [HttpPut]
-        [Route("{id}")]
+        [HttpPut("UpdateUser/{id}")]
         public IActionResult UpdateUser([FromRoute] int id, [FromBody]UserDto userDto)
         {
             var user = _context.Users.Find(id);
@@ -86,8 +99,7 @@ namespace LC4_TO_DO.Controllers
             return Ok($"Usuario ID {id} actualizado correctamente");
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("DeleteUser/{id}")]
         public IActionResult DeleteUser([FromRoute] int id)
         {
             var user =  _context.Users.Find(id);
